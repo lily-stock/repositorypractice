@@ -1,0 +1,93 @@
+---
+title: "data homework 4"
+author: "Lily Stockbridge"
+date: "2023-02-13"
+output: pdf_document
+---
+```{r, include=FALSE}
+library(tidyverse)
+library(purrr)
+```
+
+# 1)
+## a) Use the R function nrow to confirm that the iris data frame has 150 rows. Then use and show R code that features a map function to confirm that the iris data frame has 150 rows.
+```{r}
+nrow(iris)
+length(pmap(iris, sum))
+```
+
+## b) Each column of the iris data frame has a unique number of values or objects. For example, the column Sepal.Length has 150 values but 35 of them are unique. Use and show R code that features a map function to find the number of unique values or objects for each column of the iris data frame.
+```{r}
+n_unique <- function(x) length(unique(x))
+map_int(iris, n_unique)
+```
+
+# 2)
+## Use and show R code that features a nested loop that will produce the  5 by 3 matrix shown below.
+```{r}
+matrix.hw = matrix(nrow=3, ncol=5) 
+for(i in 1:nrow(matrix.hw))       
+{
+  for(j in 1:ncol(matrix.hw))     
+  {
+    matrix.hw[i,j] = j-i       
+  }
+}
+print(matrix.hw)
+```
+
+# 3)
+## Use and show R code that will produce a tibble that features 10 randomly generated values that are normally distributed, with means of -10, 0, 10 and 100 respectfully. Run your code again, producing a second tibble, that confirms random values, hence the second table will not have the same values.
+```{r}
+params <- tribble(
+  ~ mean, -10, 0, 10, 100, ~n, 10, 10, 10, 10
+)
+
+map(params, rnorm)
+map(params, rnorm)
+```
+
+# 4) 
+X <- list(12, 14, 15, 18, 19, 22,10,18,18)
+Mean <- list(16, 16, 16, 16, 16,16,16,16,16)
+sd <- list(2, 2, 2, 2, 2,2,2,2,2)
+## a) In statistics, a z score indicates the standard deviation distance between the mean and a specific value of the data set. What formula is used to find a z score? Use and show R coding that features a map function to iteratively find z scores across the lists given above.
+```{r}
+x <- list(12, 14, 15, 18, 19, 22,10,18,18)
+Mean <- list(16, 16, 16, 16, 16,16,16,16,16)
+sd <- list(2, 2, 2, 2, 2,2,2,2,2)
+
+pmap_dbl(list(x, Mean, sd), function(first, second, third) (first - second)/third)
+```
+
+## b) The test statistic for a population mean is given by the formula ((X - mean)/s/sqrt(n)) Use and show R coding that features a map function to iteratively find test statistics for population means across the lists given above.
+```{r}
+pmap_dbl(list(x, Mean, sd), function(first, second, third) (first - second)/(third/(sqrt(9))))
+```
+
+# 5)
+V = c(10,15,17,22,32,38,42)
+## a) Another purr package function is the keep( ) function. Research, explore, and use the keep( ) function to extract all number from the vector V given above that are less than 20
+```{r}
+V <- c(10,15,17,22,32,38,42)
+keep(V, V < 20)
+```
+
+## b) Another purr package function is the discard( ) function. Research, explore, and use the discard( ) function to eliminate all numbers from the vector V given above that are less than 20
+```{r}
+discard(V, V < 20)
+```
+
+# 6)
+## Another purr package function is the safely( ) function. Research, explore, and apply the safely( ) function  to the given vector below as illustrated.
+  U = list(10,15,"mary",22,32,"james",42)
+  map(U, safely(~ .x + 15))
+## In four or five sentences, explain the specific output for this problem and how the definition and the application of the safely( ) function is used.
+
+The safely() function is allowing the function to run without producing an error code. We're working with a list that contains character values so normally R would produce an error if you try to add to a character value because you can't do that. But with the safely() function, it allows you to run your function (x+15) through the list without stopping. It will tell you that there was an error in adding to those specific elements but will continue to run the code on the rest of the elements and produce the correct x + 15 to the numeric elements.
+
+```{r}
+  U = list(10,15,"mary",22,32,"james",42)
+  map(U, safely(~ .x + 15))
+```
+
